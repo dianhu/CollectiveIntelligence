@@ -60,6 +60,48 @@ def topMatches(prefs,person,n=5,similarity=sim_pearson):
     scores=[(similarity(prefs, person, other),other) for other in prefs if other!=person]
     scores.sort(reverse=True)
     return scores[0:n]
+#根据影片评分的加权平均值，推荐影片    
+def getRecommendations(prefs,person,similarity=sim_pearson):
+    totals={}
+    simSums={}
+    #对其他人循环处理
+    for other in prefs:
+        if other == person: continue
+        sim=similarity(prefs, person, other)
+        #忽略相似度<=0的人
+        if sim <=0:continue
+        
+        for item in prefs[other]:
+            #对自己还未曾看过的影片进行评分
+            if item not in prefs[person] or prefs[person][item]==0:
+                totals.setdefault(item,0)
+                #累加同一部影片的相似度*评价值，{'Just My Luck',12.89}
+                totals[item]+=prefs[other][item]*sim
+                #累加同一部影片的相似度之和
+                simSums.setdefault(item,0)
+                simSums[item]+=sim
+    #每部影片的rank值，以元组的形式存放在列表中
+    rangkings=[(total/simSums[item]) for total,item in totals.items()]
     
-     
+    rangkings.sort(reverse=True)
     
+    return rangkings
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

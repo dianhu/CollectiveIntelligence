@@ -13,3 +13,5 @@ print(recommendations.sim_pearson(critics, 'Lisa Rose', 'Gene Seymour'))
 
 print(recommendations.topMatches(critics, 'Hcy',n=3,similarity=sim_pearson))
 print(recommendations.topMatches(critics, 'Hcy',n=3,similarity=sim_distance))
+
+print(recommendations.getRecommendations(critics, 'Hcy'))
