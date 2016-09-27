@@ -30,7 +30,7 @@ def print_dptable(V):
 
 def viterbi(obs, states, start_p, trans_p, emit_p):
     """
-
+    时间复杂度：O(T*N²)，T为观测序列长度，N为隐状态数量
     :param obs:观测序列
     :param states:隐状态
     :param start_p:初始概率（隐状态）
@@ -40,7 +40,7 @@ def viterbi(obs, states, start_p, trans_p, emit_p):
     """
     # 路径概率表 V[时间][隐状态] = 概率
     V = [{}]
-    # 一个中间变量，代表当前状态是哪个隐状态
+    # 记录状态对应的转移路径
     path = {}
 
     # 初始化初始状态 (t == 0)
@@ -54,19 +54,20 @@ def viterbi(obs, states, start_p, trans_p, emit_p):
         newpath = {}
         #动态规划，记录当前时刻每个隐状态的最大概率和from节点
         for y in states:
-            # 概率 隐状态 =    前状态是y0的概率 * y0转移到y的概率 * y表现为当前状态的概率
+            # 最大概率 对应的前状态 =    前状态是y0的概率 * y0转移到y的概率 * y表现为当前状态的概率
             (prob, state) = max([(V[t - 1][y0] * trans_p[y0][y] * emit_p[y][obs[t]], y0) for y0 in states])
             # 记录最大概率
             V[t][y] = prob
-            # 记录路径
+            # 记录路径：　当前状态路径＝前状态路径＋当前状态
             newpath[y] = path[state] + [y]
 
         # 不需要保留旧路径
         path = newpath
 
     print_dptable(V)
-    #通过最后一个概率最大的节点去反向寻找最大路径
+    #找到最后一个概率最大的状态
     (prob, state) = max([(V[len(obs) - 1][y], y) for y in states])
+    #根据此状态去path列表中寻找对应的转移路径
     return (prob, path[state])
 
 
